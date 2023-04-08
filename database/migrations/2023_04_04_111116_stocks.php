@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('productName');
             $table->string('barcodeNo')->unique();
-            $table->integer('stocksQuantity');
+            $table->integer('stocksQuantity')->default(0)->nullable();
             $table->float('purchasePrice');
             $table->float('salePrice');
             $table->timestamp('invoiceDate');

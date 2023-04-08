@@ -42,17 +42,17 @@ class StokController extends Controller
                 'invoiceDate' => 'required',
             ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    "status" => "warning",
-                    "message" => $validator->errors()
-                ]);
-    }
-    Stock::create($request->all());
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => "warning",
+                "message" => $validator->errors()
+            ]);
+        }
+        Stock::create($request->all());
 
-    return response()->json([
-        'status' => 'success'
-    ], 201);
+        return response()->json([
+            'status' => 'success'
+        ], 201);
     }
     /**
      * Display the specified resource.
@@ -72,19 +72,55 @@ class StokController extends Controller
      */
     public function update(Request $request, string $id)
     {
-       //Burası kaldı güncelleme
+        
+
+        $validator = Validator::make($request->all(),[
+            'productName' => 'required|min:3|max:255',
+            'barcodeNo' => 'required|max:11|min:11',
+            'stocksQuantity' => 'required',
+            'purchasePrice' => 'required',
+            'salePrice' => 'required',
+            'invoiceDate' => 'required',
+        ]);
+    
+       // dd($validator);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => "warning",
+                "message" => $validator->errors()
+            ]);
+        }
+
+        $product = Stock::find($id);
+
+        if (!$product) {
+            return response()->json([
+                "status" => "warning",
+                "message" => "Ürün bulunamadı"
+            ], 404);
+        }
+
+       $product->productName = $request-> productName;
+       $product->barcodeNo = $request->barcodeNo;
+       $product->stocksQuantity = $request->stokcsQuantity;
+       $product->purchasePrice = $request->purchasePrice;
+       $product->invoiceDate = $request->invoiceDate;
+
+        $product->save();
+
+        return response()->json([
+            'status' => 'success'
+        ], 200);
     }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-
+        Stock::destroy($id);
         return response()->json([
             "status" =>"success",
-            "data"=> Stock::destroy($id)
-       
-         ]);
-       
-        }
+        ]);
+    }
 }
